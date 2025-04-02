@@ -21,6 +21,11 @@ public class TennisServiceImpl implements TennisService {
         ScorePlayer scorePlayerOne = tennisGame.getScorePlayerOne();
         ScorePlayer scorePlayerTwo = tennisGame.getScorePlayerTwo();
         int difference = scorePlayerOne.getScore() - scorePlayerTwo.getScore();
+
+        if (scorePlayerOne.getScore() < 3 && scorePlayerTwo.getScore() < 3) {
+            return;
+        }
+
         if (difference == 0) {
             tennisGame.setDeuce(true);
             return;

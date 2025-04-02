@@ -23,7 +23,7 @@ public class TennisGame {
         if (playerId == scorePlayerTwo.getPlayer().getId()) {
             return scorePlayerTwo;
         }
-        return null;
+        throw new IllegalArgumentException("the player with id : " + playerId + " not found");
     }
 }
 
