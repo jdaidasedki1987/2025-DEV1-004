@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class TennisServiceImpl implements TennisService {
 
-    private TennisGame tennisGame = TennisGameInitializer.initializeTennisGame();
 
     @Override
     public void wonPoint(Long playerId) {
+        TennisGame tennisGame = TennisGameInitializer.initializeTennisGame();
         if (!tennisGame.isRunning()) {
             return;
         }
@@ -49,6 +49,7 @@ public class TennisServiceImpl implements TennisService {
 
     @Override
     public String getScore() {
+        TennisGame tennisGame = TennisGameInitializer.initializeTennisGame();
         if (tennisGame.getPlayerWinner() != null) {
             return "The game is finished and the winner is : " + tennisGame.getPlayerWinner().getName();
         }
@@ -61,6 +62,11 @@ public class TennisServiceImpl implements TennisService {
 
         return convertScorePlayer(tennisGame.getScorePlayerOne().getScore()) + " - " + convertScorePlayer(tennisGame.getScorePlayerTwo().getScore());
 
+    }
+
+    @Override
+    public void resetGame() {
+        TennisGameInitializer.reset();
     }
 
     private String convertScorePlayer(int score) {

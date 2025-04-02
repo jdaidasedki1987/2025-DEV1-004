@@ -4,6 +4,7 @@ import com.kata.tennis.model.TennisGame;
 import com.kata.tennis.service.impl.TennisServiceImpl;
 import com.kata.tennis.utils.TennisGameInitializer;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,12 +18,16 @@ class TennisServiceTest {
     @InjectMocks
     private TennisServiceImpl tennisService;
 
-    TennisGame tennisGame = TennisGameInitializer.initializeTennisGame();
+    TennisGame tennisGame = null;
+
+    @BeforeEach
+    void setUp() {
+        tennisGame = TennisGameInitializer.initializeTennisGame();
+    }
 
     @AfterEach
     void cleanup() {
         TennisGameInitializer.reset();
-        tennisGame = TennisGameInitializer.initializeTennisGame();
     }
 
 
@@ -191,6 +196,17 @@ class TennisServiceTest {
         tennisService.wonPoint(2L);
         assertEquals("The game is finished and the winner is : playerTwo", tennisService.getScore());
         assertFalse(tennisGame.isRunning());
+    }
+
+    @Test
+    void shouldResetScores_WhenGameIsReset() {
+        tennisService.wonPoint(1L);
+        tennisService.wonPoint(2L);
+        tennisService.wonPoint(1L);
+        tennisService.wonPoint(2L);
+        assertEquals("30 - 30", tennisService.getScore());
+        tennisService.resetGame();
+        assertEquals("0 - 0", tennisService.getScore());
     }
 
 
