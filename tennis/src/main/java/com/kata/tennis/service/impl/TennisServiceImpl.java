@@ -46,4 +46,29 @@ public class TennisServiceImpl implements TennisService {
         }
 
     }
+
+    @Override
+    public String getScore() {
+        if (tennisGame.getPlayerWinner() != null) {
+            return "The game is finished and the winner is : " + tennisGame.getPlayerWinner().getName();
+        }
+        if (tennisGame.getPlayerHasAdvantage() != null) {
+            return "Advantage for the player : " + tennisGame.getPlayerHasAdvantage().getName();
+        }
+        if (tennisGame.isDeuce()) {
+            return "Deuce";
+        }
+
+        return convertScorePlayer(tennisGame.getScorePlayerOne().getScore()) + " - " + convertScorePlayer(tennisGame.getScorePlayerTwo().getScore());
+
+    }
+
+    private String convertScorePlayer(int score) {
+        return switch (score) {
+            case 0 -> "0";
+            case 1 -> "15";
+            case 2 -> "30";
+            default -> "40";
+        };
+    }
 }
