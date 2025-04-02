@@ -1,6 +1,9 @@
 package com.kata.tennis;
 
 import com.kata.tennis.model.TennisGame;
+import com.kata.tennis.service.impl.TennisServiceImpl;
+import com.kata.tennis.utils.TennisGameInitializer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,12 +12,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TennisServiceTest {
+class TennisServiceTest {
 
     @InjectMocks
     private TennisServiceImpl tennisService;
 
-    TennisGame tennisGame = TennisGameInitializer.getInstance();
+    TennisGame tennisGame = TennisGameInitializer.initializeTennisGame();
+
+    @AfterEach
+    void cleanup() {
+        TennisGameInitializer.reset();
+        tennisGame = TennisGameInitializer.initializeTennisGame();
+    }
 
 
     @Test

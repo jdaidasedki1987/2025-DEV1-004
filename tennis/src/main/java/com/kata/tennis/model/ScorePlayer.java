@@ -1,5 +1,6 @@
 package com.kata.tennis.model;
 
+
 import lombok.Data;
 
 @Data
@@ -11,4 +12,7 @@ public class ScorePlayer {
         this.player = player;
     }
 
+    public void incrementPoint() {
+        score++;
+    }
 }

@@ -16,4 +16,14 @@ public class TennisGame {
         this.scorePlayerTwo = scorePlayerTwo;
     }
 
+    public ScorePlayer getScorePlayerById(Long playerId) {
+        if (playerId == scorePlayerOne.getPlayer().getId()) {
+            return scorePlayerOne;
+        }
+        if (playerId == scorePlayerTwo.getPlayer().getId()) {
+            return scorePlayerTwo;
+        }
+        return null;
+    }
 }
+
