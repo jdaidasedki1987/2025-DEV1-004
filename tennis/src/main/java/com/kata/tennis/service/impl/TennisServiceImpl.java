@@ -28,14 +28,22 @@ public class TennisServiceImpl implements TennisService {
 
         if (difference == 0) {
             tennisGame.setDeuce(true);
+            tennisGame.setPlayerHasAdvantage(null);
             return;
         }
         if (scorePlayerOne.getScore() < 4 && scorePlayerTwo.getScore() < 4) {
             return;
         }
 
+        if (Math.abs(difference) == 1) {
+            tennisGame.setPlayerHasAdvantage(difference > 0 ? scorePlayerOne.getPlayer() : scorePlayerTwo.getPlayer());
+            return;
+        }
+
         if (Math.abs(difference) >= 2) {
+            tennisGame.setPlayerWinner(difference > 0 ? scorePlayerOne.getPlayer() : scorePlayerTwo.getPlayer());
             tennisGame.setRunning(false);
         }
+
     }
 }

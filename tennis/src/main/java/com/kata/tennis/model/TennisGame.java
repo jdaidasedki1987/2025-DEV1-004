@@ -11,6 +11,10 @@ public class TennisGame {
 
     private boolean isDeuce = false;
 
+    private Player playerHasAdvantage;
+
+    private Player playerWinner;
+
     public TennisGame(ScorePlayer scorePlayerOne, ScorePlayer scorePlayerTwo) {
         this.scorePlayerOne = scorePlayerOne;
         this.scorePlayerTwo = scorePlayerTwo;
