@@ -68,4 +68,20 @@ class TennisServiceTest {
         assertTrue(tennisGame.isDeuce());
     }
 
+    @Test
+    void shouldNotReachDeuce_WhenBothPlayersHaveTwoPoints() {
+        tennisService.wonPoint(1L);
+        tennisService.wonPoint(1L);
+        tennisService.wonPoint(2L);
+        tennisService.wonPoint(2L);
+        assertFalse(tennisGame.isDeuce());
+    }
+
+    @Test
+    void shouldThrowException_WhenPlayerIdIsInvalid() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            tennisService.wonPoint(3L);
+        });
+        assertEquals("the player with id : 3 not found", exception.getMessage());
+    }
 }
