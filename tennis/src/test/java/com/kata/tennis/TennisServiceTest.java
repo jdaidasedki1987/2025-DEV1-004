@@ -143,6 +143,57 @@ class TennisServiceTest {
         assertEquals("the player with id : 3 not found", exception.getMessage());
     }
 
+    @Test
+    void shouldReturnCorrectScore_WhenGameIsNotFinished() {
+        tennisService.wonPoint(2L);
+        tennisService.wonPoint(1L);
+        tennisService.wonPoint(1L);
+        assertTrue(tennisGame.isRunning());
+        assertEquals("30 - 15", tennisService.getScore());
+    }
+
+    @Test
+    void shouldReturnDeuce_WhenPlayersHaveEqualHighScores() {
+        giveThreePointsForEachPlayer();
+        assertEquals("Deuce", tennisService.getScore());
+    }
+
+    @Test
+    void shouldShowAdvantageForPlayerOne_WhenTheyScoreAfterDeuce() {
+        giveThreePointsForEachPlayer();
+        tennisService.wonPoint(1L);
+        assertEquals("Advantage for the player : playerOne", tennisService.getScore());
+        assertTrue(tennisGame.isRunning());
+    }
+
+    @Test
+    void shouldShowAdvantageForPlayerTwo_WhenTheyScoreAfterDeuce() {
+        giveThreePointsForEachPlayer();
+        tennisService.wonPoint(2L);
+        assertEquals("Advantage for the player : playerTwo", tennisService.getScore());
+        assertTrue(tennisGame.isRunning());
+    }
+
+    @Test
+    void shouldDeclarePlayerOneAsWinner_WhenTheyWinGame() {
+        tennisService.wonPoint(1L);
+        tennisService.wonPoint(1L);
+        tennisService.wonPoint(1L);
+        tennisService.wonPoint(1L);
+        assertEquals("The game is finished and the winner is : playerOne", tennisService.getScore());
+        assertFalse(tennisGame.isRunning());
+    }
+
+    @Test
+    void shouldDeclarePlayerTwoAsWinner_WhenTheyWinGame() {
+        giveThreePointsForEachPlayer();
+        tennisService.wonPoint(2L);
+        tennisService.wonPoint(2L);
+        assertEquals("The game is finished and the winner is : playerTwo", tennisService.getScore());
+        assertFalse(tennisGame.isRunning());
+    }
+
+
     /**
      * Each player will have three points
      */
