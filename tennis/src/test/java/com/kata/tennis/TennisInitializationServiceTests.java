@@ -1,5 +1,8 @@
 package com.kata.tennis;
 
+import com.kata.tennis.model.Player;
+import com.kata.tennis.model.ScorePlayer;
+import com.kata.tennis.model.TennisGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
