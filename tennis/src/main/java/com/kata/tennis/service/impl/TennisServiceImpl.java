@@ -1,5 +1,7 @@
 package com.kata.tennis.service.impl;
 
+import com.kata.tennis.enums.TennisGameStatus;
+import com.kata.tennis.exceptions.GameFinishedException;
 import com.kata.tennis.model.ScorePlayer;
 import com.kata.tennis.model.TennisGame;
 import com.kata.tennis.service.TennisService;
@@ -13,8 +15,8 @@ public class TennisServiceImpl implements TennisService {
     @Override
     public void wonPoint(Long playerId) {
         TennisGame tennisGame = TennisGameInitializer.initializeTennisGame();
-        if (!tennisGame.isRunning()) {
-            return;
+        if (TennisGameStatus.FINISHED.equals(tennisGame.getStatus())) {
+            throw new GameFinishedException("You can't add points when game is finished");
         }
         ScorePlayer scorePlayer = tennisGame.getScorePlayerById(playerId);
         scorePlayer.incrementPoint();
@@ -27,7 +29,7 @@ public class TennisServiceImpl implements TennisService {
         }
 
         if (difference == 0) {
-            tennisGame.setDeuce(true);
+            tennisGame.setStatus(TennisGameStatus.DEUCE);
             tennisGame.setPlayerHasAdvantage(null);
             return;
         }
@@ -36,13 +38,14 @@ public class TennisServiceImpl implements TennisService {
         }
 
         if (Math.abs(difference) == 1) {
+            tennisGame.setStatus(TennisGameStatus.ADVANTAGE);
             tennisGame.setPlayerHasAdvantage(difference > 0 ? scorePlayerOne.getPlayer() : scorePlayerTwo.getPlayer());
             return;
         }
 
         if (Math.abs(difference) >= 2) {
             tennisGame.setPlayerWinner(difference > 0 ? scorePlayerOne.getPlayer() : scorePlayerTwo.getPlayer());
-            tennisGame.setRunning(false);
+            tennisGame.setStatus(TennisGameStatus.FINISHED);
         }
 
     }
@@ -56,7 +59,7 @@ public class TennisServiceImpl implements TennisService {
         if (tennisGame.getPlayerHasAdvantage() != null) {
             return "Advantage for the player : " + tennisGame.getPlayerHasAdvantage().getName();
         }
-        if (tennisGame.isDeuce()) {
+        if (TennisGameStatus.DEUCE.equals(tennisGame.getStatus())) {
             return "Deuce";
         }
 

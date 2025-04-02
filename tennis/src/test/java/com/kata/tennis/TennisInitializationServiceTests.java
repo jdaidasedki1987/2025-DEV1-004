@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.kata.tennis.enums.TennisGameStatus.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,8 +41,7 @@ class TennisInitializationServiceTests {
         assertNotNull(tennisGame.getScorePlayerTwo());
         assertEquals(0, tennisGame.getScorePlayerOne().getScore());
         assertEquals(0, tennisGame.getScorePlayerTwo().getScore());
-        assertTrue(tennisGame.isRunning(), "Game should be running after initialization");
-        assertFalse(tennisGame.isDeuce(), "Game should not start in a deuce state");
+        assertEquals(STARTED, tennisGame.getStatus());
     }
 
 

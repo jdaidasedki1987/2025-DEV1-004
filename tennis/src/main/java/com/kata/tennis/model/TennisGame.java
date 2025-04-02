@@ -1,5 +1,7 @@
 package com.kata.tennis.model;
 
+import com.kata.tennis.enums.TennisGameStatus;
+import com.kata.tennis.exceptions.PlayerNotFoundException;
 import lombok.Data;
 
 @Data
@@ -7,9 +9,7 @@ public class TennisGame {
     private ScorePlayer scorePlayerOne;
     private ScorePlayer scorePlayerTwo;
 
-    private boolean isRunning = true;
-
-    private boolean isDeuce = false;
+    private TennisGameStatus status = TennisGameStatus.STARTED;
 
     private Player playerHasAdvantage;
 
@@ -27,7 +27,7 @@ public class TennisGame {
         if (playerId == scorePlayerTwo.getPlayer().getId()) {
             return scorePlayerTwo;
         }
-        throw new IllegalArgumentException("the player with id : " + playerId + " not found");
+        throw new PlayerNotFoundException("the player with id : " + playerId + " not found");
     }
 }
 

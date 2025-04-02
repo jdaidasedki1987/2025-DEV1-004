@@ -1,5 +1,7 @@
 package com.kata.tennis;
 
+import com.kata.tennis.exceptions.GameFinishedException;
+import com.kata.tennis.exceptions.PlayerNotFoundException;
 import com.kata.tennis.model.TennisGame;
 import com.kata.tennis.service.impl.TennisServiceImpl;
 import com.kata.tennis.utils.TennisGameInitializer;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.kata.tennis.enums.TennisGameStatus.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,7 +33,6 @@ class TennisServiceTest {
         TennisGameInitializer.reset();
     }
 
-
     @Test
     void testWonPoint_GameNotRunning() {
         //player won 4 points
@@ -41,9 +43,10 @@ class TennisServiceTest {
         assertEquals(4, tennisGame.getScorePlayerOne().getScore());
         assertEquals(0, tennisGame.getScorePlayerTwo().getScore());
         //Game must be finished
-        assertFalse(tennisGame.isRunning());
+        assertEquals(FINISHED, tennisGame.getStatus());
         //player one won point after game is finished
-        tennisService.wonPoint(1L);
+        Exception exception = assertThrows(GameFinishedException.class, () -> tennisService.wonPoint(1L));
+        assertEquals("You can't add points when game is finished", exception.getMessage());
         assertEquals(4, tennisGame.getScorePlayerOne().getScore());
     }
 
@@ -65,9 +68,9 @@ class TennisServiceTest {
 
     @Test
     void shouldReachDeuce_WhenBothPlayersHaveThreePoints() {
-        assertFalse(tennisGame.isDeuce());
+        assertNotEquals(DEUCE, tennisGame.getStatus());
         giveThreePointsForEachPlayer();
-        assertTrue(tennisGame.isDeuce());
+        assertEquals(DEUCE, tennisGame.getStatus());
     }
 
     @Test
@@ -96,7 +99,7 @@ class TennisServiceTest {
         //the player two loses advantage  and game returns to deuce
         tennisService.wonPoint(1L);
         assertNull(tennisGame.getPlayerHasAdvantage());
-        assertTrue(tennisGame.isDeuce());
+        assertEquals(DEUCE, tennisGame.getStatus());
     }
 
     @Test
@@ -107,7 +110,8 @@ class TennisServiceTest {
         tennisService.wonPoint(1L);
         assertNotNull(tennisGame.getPlayerWinner());
         assertEquals("playerOne", tennisGame.getPlayerWinner().getName());
-        assertFalse(tennisGame.isRunning());
+        assertEquals(FINISHED,tennisGame.getStatus());
+
     }
 
     @Test
@@ -119,7 +123,7 @@ class TennisServiceTest {
         tennisService.wonPoint(2L);
         assertNotNull(tennisGame.getPlayerWinner());
         assertEquals("playerTwo", tennisGame.getPlayerWinner().getName());
-        assertFalse(tennisGame.isRunning());
+        assertEquals(FINISHED,tennisGame.getStatus());
     }
 
     @Test
@@ -128,7 +132,8 @@ class TennisServiceTest {
         giveThreePointsForEachPlayer();
         assertEquals(6, tennisGame.getScorePlayerOne().getScore());
         assertEquals(6, tennisGame.getScorePlayerTwo().getScore());
-        assertTrue(tennisGame.isRunning());
+        assertNotEquals(FINISHED,tennisGame.getStatus());
+
     }
 
     @Test
@@ -137,14 +142,12 @@ class TennisServiceTest {
         tennisService.wonPoint(1L);
         tennisService.wonPoint(2L);
         tennisService.wonPoint(2L);
-        assertFalse(tennisGame.isDeuce());
+        assertNotEquals(DEUCE,tennisGame.getStatus());
     }
 
     @Test
     void shouldThrowException_WhenPlayerIdIsInvalid() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            tennisService.wonPoint(3L);
-        });
+        Exception exception = assertThrows(PlayerNotFoundException.class, () -> tennisService.wonPoint(3L));
         assertEquals("the player with id : 3 not found", exception.getMessage());
     }
 
@@ -153,7 +156,7 @@ class TennisServiceTest {
         tennisService.wonPoint(2L);
         tennisService.wonPoint(1L);
         tennisService.wonPoint(1L);
-        assertTrue(tennisGame.isRunning());
+        assertEquals(STARTED,tennisGame.getStatus());
         assertEquals("30 - 15", tennisService.getScore());
     }
 
@@ -168,7 +171,8 @@ class TennisServiceTest {
         giveThreePointsForEachPlayer();
         tennisService.wonPoint(1L);
         assertEquals("Advantage for the player : playerOne", tennisService.getScore());
-        assertTrue(tennisGame.isRunning());
+        assertEquals(ADVANTAGE,tennisGame.getStatus());
+
     }
 
     @Test
@@ -176,7 +180,7 @@ class TennisServiceTest {
         giveThreePointsForEachPlayer();
         tennisService.wonPoint(2L);
         assertEquals("Advantage for the player : playerTwo", tennisService.getScore());
-        assertTrue(tennisGame.isRunning());
+        assertEquals(ADVANTAGE,tennisGame.getStatus());
     }
 
     @Test
@@ -186,7 +190,7 @@ class TennisServiceTest {
         tennisService.wonPoint(1L);
         tennisService.wonPoint(1L);
         assertEquals("The game is finished and the winner is : playerOne", tennisService.getScore());
-        assertFalse(tennisGame.isRunning());
+        assertEquals(FINISHED,tennisGame.getStatus());
     }
 
     @Test
@@ -195,7 +199,7 @@ class TennisServiceTest {
         tennisService.wonPoint(2L);
         tennisService.wonPoint(2L);
         assertEquals("The game is finished and the winner is : playerTwo", tennisService.getScore());
-        assertFalse(tennisGame.isRunning());
+        assertEquals(FINISHED,tennisGame.getStatus());
     }
 
     @Test
