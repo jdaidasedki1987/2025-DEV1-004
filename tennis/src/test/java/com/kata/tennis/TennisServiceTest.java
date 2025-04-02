@@ -61,11 +61,69 @@ class TennisServiceTest {
     @Test
     void shouldReachDeuce_WhenBothPlayersHaveThreePoints() {
         assertFalse(tennisGame.isDeuce());
-        for (int i = 0; i < 3; i++) {
-            tennisService.wonPoint(1L);
-            tennisService.wonPoint(2L);
-        }
+        giveThreePointsForEachPlayer();
         assertTrue(tennisGame.isDeuce());
+    }
+
+    @Test
+    void shouldGiveAdvantageToPlayerOne_WhenTheyScoreAfterDeuce() {
+        giveThreePointsForEachPlayer();
+        //The player One have another point
+        tennisService.wonPoint(1L);
+        assertNotNull(tennisGame.getPlayerHasAdvantage());
+        assertEquals("playerOne", tennisGame.getPlayerHasAdvantage().getName());
+    }
+
+    @Test
+    void shouldGiveAdvantageToPlayerTwo_WhenTheyScoreAfterDeuce() {
+        giveThreePointsForEachPlayer();
+        //The player two have another point
+        tennisService.wonPoint(2L);
+        assertNotNull(tennisGame.getPlayerHasAdvantage());
+        assertEquals("playerTwo", tennisGame.getPlayerHasAdvantage().getName());
+    }
+
+    @Test
+    void shouldReturnToDeuce_WhenAdvantagePlayerLosesNextPoint() {
+        giveThreePointsForEachPlayer();
+        //the player two have advantage then player one
+        tennisService.wonPoint(2L);
+        //the player two loses advantage  and game returns to deuce
+        tennisService.wonPoint(1L);
+        assertNull(tennisGame.getPlayerHasAdvantage());
+        assertTrue(tennisGame.isDeuce());
+    }
+
+    @Test
+    void shouldDeclarePlayerOneAsWinner_WhenTheyWinEnoughPoints() {
+        giveThreePointsForEachPlayer();
+        tennisService.wonPoint(1L);
+        assertNull(tennisGame.getPlayerWinner());
+        tennisService.wonPoint(1L);
+        assertNotNull(tennisGame.getPlayerWinner());
+        assertEquals("playerOne", tennisGame.getPlayerWinner().getName());
+        assertFalse(tennisGame.isRunning());
+    }
+
+    @Test
+    void shouldDeclarePlayerTwoAsWinner_WhenTheyWinEnoughPoints() {
+        tennisService.wonPoint(2L);
+        tennisService.wonPoint(2L);
+        assertNull(tennisGame.getPlayerWinner());
+        tennisService.wonPoint(2L);
+        tennisService.wonPoint(2L);
+        assertNotNull(tennisGame.getPlayerWinner());
+        assertEquals("playerTwo", tennisGame.getPlayerWinner().getName());
+        assertFalse(tennisGame.isRunning());
+    }
+
+    @Test
+    void shouldContinueGame_WhenBothPlayersHaveHighScores() {
+        giveThreePointsForEachPlayer();
+        giveThreePointsForEachPlayer();
+        assertEquals(6, tennisGame.getScorePlayerOne().getScore());
+        assertEquals(6, tennisGame.getScorePlayerTwo().getScore());
+        assertTrue(tennisGame.isRunning());
     }
 
     @Test
@@ -83,5 +141,16 @@ class TennisServiceTest {
             tennisService.wonPoint(3L);
         });
         assertEquals("the player with id : 3 not found", exception.getMessage());
+    }
+
+    /**
+     * Each player will have three points
+     */
+    private void giveThreePointsForEachPlayer() {
+
+        for (int i = 0; i < 3; i++) {
+            tennisService.wonPoint(1L);
+            tennisService.wonPoint(2L);
+        }
     }
 }
